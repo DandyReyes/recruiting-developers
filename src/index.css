@@ -1550,6 +1550,10 @@
     --tw-ring-color: var(--destructive);
   }
 
+  .aria-invalid\:text-destructive[aria-invalid="true"] {
+  color: var(--destructive);
+}
+
   @supports (color: color-mix(in lab, red, red)) {
     .aria-invalid\:ring-destructive\/20[aria-invalid="true"] {
       --tw-ring-color: color-mix(in oklab, var(--destructive) 20%, transparent);
@@ -1973,6 +1977,7 @@
   --accent-foreground: #1a2e40;
   --destructive: #d4183d;
   --destructive-foreground: #fff;
+  --color-success: #22c55e;
   --border: #3e3e3e33;
   --input: transparent;
   --input-background: #fff;
@@ -2031,6 +2036,13 @@
   --sidebar-accent-foreground: oklch(.985 0 0);
   --sidebar-border: oklch(.269 0 0);
   --sidebar-ring: oklch(.439 0 0);
+}
+
+.bg-success {
+  background-color: var(--color-success);
+}
+.text-success {
+  color: var(--color-success);
 }
 
 html {

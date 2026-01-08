@@ -1,3 +1,4 @@
+import { useState, useRef, useEffect } from "react";
 import { Button } from "./ui/button";
 import {
   Card,
@@ -9,17 +10,122 @@ import {
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { Label } from "./ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./ui/select";
-import { ImageWithFallback } from "./images/ImageWithFallback";
-import { Mail, Phone, MapPin, Clock, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import ReCAPTCHA from "react-google-recaptcha";
+import emailjs from "@emailjs/browser";
 
 export function Contact() {
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    company: "",
+    message: "",
+  });
+
+  const [errors, setErrors] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    company: "",
+  });
+
+  const [toast, setToast] = useState<{
+    type: "error" | "success";
+    message: string;
+  } | null>(null);
+
+  useEffect(() => {
+    if (!toast) return;
+    const timer = setTimeout(() => setToast(null), 5000);
+    return () => clearTimeout(timer);
+  }, [toast]);
+
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { id, value } = e.target;
+    setFormData((prev) => ({ ...prev, [id]: value }));
+
+    if (errors[id as keyof typeof errors]) {
+      setErrors((prev) => ({ ...prev, [id]: "" }));
+    }
+  };
+
+  const validateInputs = () => {
+    let valid = true;
+    const newErrors: typeof errors = {
+      firstName: "",
+      lastName: "",
+      email: "",
+      company: "",
+    };
+
+    if (!formData.firstName.trim()) {
+      newErrors.firstName = "First name is required";
+      valid = false;
+    }
+    if (!formData.lastName.trim()) {
+      newErrors.lastName = "Last name is required";
+      valid = false;
+    }
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+      valid = false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = "Email is invalid";
+      valid = false;
+    }
+    if (!formData.company.trim()) {
+      newErrors.company = "Company name is required";
+      valid = false;
+    }
+
+    setErrors(newErrors);
+    return valid;
+  };
+
+  const handleSubmit = async () => {
+    if (!validateInputs())
+      return setToast({
+        type: "error",
+        message: "Please fix the errors in the form",
+      });
+
+    const token = recaptchaRef.current?.getValue();
+    if (!token)
+      return setToast({
+        type: "error",
+        message: "Please complete the reCAPTCHA",
+      });
+
+    try {
+      await emailjs.send(
+        (import.meta as any).env.VITE_SERVICE_ID,
+        (import.meta as any).env.VITE_TEMPLATE_ID,
+        {
+          ...formData,
+          "g-recaptcha-response": token,
+        },
+        (import.meta as any).env.VITE_PUBLIC_KEY
+      );
+      setToast({ type: "success", message: "Message sent successfully!" });
+
+      recaptchaRef.current?.reset();
+      setFormData({
+        firstName: "",
+        lastName: "",
+        email: "",
+        company: "",
+        message: "",
+      });
+    } catch (err) {
+      console.error("EMAILJS ERROR:", err);
+    }
+  };
+
   return (
     <section id="contact" className="py-16 lg:py-24 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -35,168 +141,130 @@ export function Contact() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-          {/* Contact Form */}
-          <div className="lg:col-span-2">
-            <Card className="border-border/50">
-              <CardHeader>
-                <CardTitle>Start a Conversation</CardTitle>
-                <CardDescription>
-                  Tell me about your hiring needs and I'll get back to you
-                  within 24 hours.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="firstName">First Name</Label>
-                    <Input id="firstName" placeholder="John" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="lastName">Last Name</Label>
-                    <Input id="lastName" placeholder="Doe" />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="john@company.com"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="company">Company</Label>
-                    <Input id="company" placeholder="Your Company" />
-                  </div>
-                </div>
-
+        <div className="lg:col-span-4">
+          <Card className="border-border/50">
+            <CardHeader>
+              <CardTitle>Start a Conversation</CardTitle>
+              <CardDescription>
+                Tell me about your hiring needs and I'll get back to you within
+                24 hours.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="serviceType">Service Type</Label>
-                  <Select>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a service" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="executive">
-                        Executive Search
-                      </SelectItem>
-                      <SelectItem value="technical">
-                        Technical Recruitment
-                      </SelectItem>
-                      <SelectItem value="contract">
-                        Contract Staffing
-                      </SelectItem>
-                      <SelectItem value="advisory">Talent Advisory</SelectItem>
-                      <SelectItem value="rapid">Rapid Placement</SelectItem>
-                      <SelectItem value="retained">Retained Search</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="message">
-                    Tell me about your hiring needs
-                  </Label>
-                  <Textarea
-                    id="message"
-                    placeholder="Describe the role(s) you're looking to fill, timeline, and any specific requirements..."
-                    className="min-h-[120px]"
+                  <Label htmlFor="firstName">First Name</Label>
+                  <Input
+                    id="firstName"
+                    placeholder="John"
+                    aria-invalid={!!errors.firstName}
+                    value={formData.firstName}
+                    onChange={handleChange}
                   />
+                  {errors.firstName && (
+                    <p className="text-sm text-destructive">
+                      {errors.firstName}
+                    </p>
+                  )}
                 </div>
-
-                <Button
-                  size="lg"
-                  className="w-full bg-secondary hover:bg-secondary/90"
-                >
-                  Send Message
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Contact Info & Image */}
-          <div className="space-y-8">
-            <Card className="border-border/50">
-              <CardContent className="p-6">
-                <h3 className="font-semibold text-foreground mb-4">
-                  Get in Touch
-                </h3>
-
-                <div className="space-y-4">
-                  <div className="flex items-center space-x-3">
-                    <div className="p-2 bg-accent/10 rounded-lg">
-                      <Mail className="h-5 w-5 text-accent" />
-                    </div>
-                    <div>
-                      <div className="font-medium text-foreground">Email</div>
-                      <div className="text-sm text-muted-foreground">
-                        dandy@reyesrecruiting.com
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center space-x-3">
-                    <div className="p-2 bg-accent/10 rounded-lg">
-                      <Phone className="h-5 w-5 text-accent" />
-                    </div>
-                    <div>
-                      <div className="font-medium text-foreground">Phone</div>
-                      <div className="text-sm text-muted-foreground">
-                        +1 (555) 123-4567
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center space-x-3">
-                    <div className="p-2 bg-accent/10 rounded-lg">
-                      <MapPin className="h-5 w-5 text-accent" />
-                    </div>
-                    <div>
-                      <div className="font-medium text-foreground">
-                        Location
-                      </div>
-                      <div className="text-sm text-muted-foreground">
-                        Remote / US-Based
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center space-x-3">
-                    <div className="p-2 bg-accent/10 rounded-lg">
-                      <Clock className="h-5 w-5 text-accent" />
-                    </div>
-                    <div>
-                      <div className="font-medium text-foreground">
-                        Response Time
-                      </div>
-                      <div className="text-sm text-muted-foreground">
-                        Within 24 hours
-                      </div>
-                    </div>
-                  </div>
+                <div className="space-y-2">
+                  <Label htmlFor="lastName">Last Name</Label>
+                  <Input
+                    id="lastName"
+                    placeholder="Doe"
+                    aria-invalid={!!errors.lastName}
+                    value={formData.lastName}
+                    onChange={handleChange}
+                  />
+                  {errors.lastName && (
+                    <p className="text-sm text-destructive">
+                      {errors.lastName}
+                    </p>
+                  )}
                 </div>
-              </CardContent>
-            </Card>
+              </div>
 
-            <div className="relative">
-              <div className="aspect-square rounded-2xl overflow-hidden shadow-lg">
-                <ImageWithFallback
-                  src="https://images.unsplash.com/photo-1758876019673-704b039d405c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjYXJlZXIlMjBzdWNjZXNzJTIwcHJvZmVzc2lvbmFsfGVufDF8fHx8MTc1OTcwNTIyMHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
-                  alt="Career success professional"
-                  className="w-full h-full object-cover"
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="john@company.com"
+                    aria-invalid={!!errors.email}
+                    value={formData.email}
+                    onChange={handleChange}
+                  />
+                  {errors.email && (
+                    <p className="text-sm text-destructive">{errors.email}</p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="company">Company</Label>
+                  <Input
+                    id="company"
+                    placeholder="Your Company"
+                    aria-invalid={!!errors.company}
+                    value={formData.company}
+                    onChange={handleChange}
+                  />
+                  {errors.company && (
+                    <p className="text-sm text-destructive">{errors.company}</p>
+                  )}
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="serviceType">Service Type</Label>
+                <p className="text-sm text-muted-foreground mb-1">
+                  Technical Recruitment / Contract Staffing
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="message">Tell me about your hiring needs</Label>
+                <Textarea
+                  id="message"
+                  placeholder="Describe the role(s) you're looking to fill, timeline, and any specific requirements..."
+                  className="min-h-[120px]"
+                  value={formData.message}
+                  onChange={handleChange}
                 />
               </div>
 
-              <div className="absolute -bottom-4 -right-4 bg-primary text-primary-foreground p-4 rounded-xl shadow-lg">
-                <div className="text-sm font-medium">Available Now</div>
-                <div className="text-xs">For New Projects</div>
-              </div>
-            </div>
-          </div>
+              <ReCAPTCHA
+                ref={recaptchaRef}
+                sitekey={(import.meta as any).env.VITE_RECAPTCHA_SITE_KEY}
+              />
+              {toast && (
+                <div
+                  className={`fixed top-4 right-4 z-50 p-4 rounded shadow-lg grid-cols-2 ${
+                    toast.type === "error"
+                      ? "bg-destructive text-white"
+                      : "bg-success text-white"
+                  }`}
+                  style={{ width: "300px" }}
+                >
+                  {toast.message}
+                  <button
+                    onClick={() => setToast(null)}
+                    className="ml-2 font-bold"
+                  >
+                    ✕
+                  </button>
+                </div>
+              )}
+
+              <Button
+                size="lg"
+                className="w-full bg-secondary hover:bg-secondary/90"
+                onClick={handleSubmit}
+              >
+                Send Message
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </section>

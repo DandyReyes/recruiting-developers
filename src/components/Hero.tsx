@@ -3,6 +3,16 @@ import { ImageWithFallback } from "./images/ImageWithFallback";
 import { ArrowRight, Users, Target, Trophy } from "lucide-react";
 
 export function Hero() {
+  const handleScrollToSection = () => {
+    const targetElement = document.getElementById("contact");
+
+    if (targetElement) {
+      targetElement.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  };
   return (
     <section className="bg-background py-12 lg:py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -20,17 +30,13 @@ export function Hero() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 mb-12">
-              <Button size="lg" className="bg-secondary hover:bg-secondary/90">
+              <a
+                className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive text-primary-foreground h-10 rounded-md px-6 has-[>svg]:px-4 w-12 bg-secondary hover:bg-secondary/90"
+                href={"#contact"}
+              >
                 Start Your Search
                 <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
-              >
-                View My Track Record
-              </Button>
+              </a>
             </div>
 
             <div className="grid grid-cols-3 gap-6">
@@ -65,12 +71,12 @@ export function Hero() {
           <div className="relative">
             <div className="aspect-square rounded-2xl overflow-hidden shadow-2xl">
               <ImageWithFallback
-                src="https://images.unsplash.com/photo-1642522029691-029b5a432954?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjBidXNpbmVzcyUyMG1lZXRpbmd8ZW58MXx8fHwxNzU5NjEzMjAyfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
+                src="images/signing_docs.jpg"
                 alt="Professional business meeting"
                 className="w-full h-full object-cover"
               />
             </div>
-            <div className="absolute -bottom-6 -right-6 bg-accent text-accent-foreground p-6 rounded-xl shadow-lg">
+            <div className="absolute -bottom-6 -right-6 bg-accent text-accent-foreground p-6 rounded-xl shadow-lg sm:block hidden">
               <div className="text-sm font-medium">Now Accepting</div>
               <div className="text-lg font-bold">New Clients</div>
             </div>

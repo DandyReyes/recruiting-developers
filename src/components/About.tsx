@@ -114,7 +114,7 @@ export function About() {
           <div className="relative">
             <div className="aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl">
               <ImageWithFallback
-                src="https://images.unsplash.com/photo-1758691736975-9f7f643d178e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkaXZlcnNlJTIwdGVhbSUyMGNvbGxhYm9yYXRpb258ZW58MXx8fHwxNzU5NjczMDk0fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
+                src="images/coding_man.jpg"
                 alt="Diverse team collaboration"
                 className="w-full h-full object-cover"
               />
@@ -127,7 +127,7 @@ export function About() {
               </div>
             </div>
 
-            <div className="absolute -bottom-6 -right-6 bg-accent text-accent-foreground p-6 rounded-xl shadow-lg">
+            <div className="absolute -bottom-6 -right-6 bg-accent text-accent-foreground p-6 rounded-xl shadow-lg sm:block hidden">
               <div className="text-2xl font-bold">New</div>
               <div className="text-sm">Fresh Perspective</div>
             </div>
