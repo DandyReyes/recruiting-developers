@@ -141,24 +141,6 @@ export function Contact() {
           </p>
         </div>
 
-        <div className="mb-10 flex flex-col items-center justify-center gap-4 rounded-xl border border-secondary/30 bg-secondary/5 px-6 py-6 text-center sm:flex-row sm:gap-5">
-          <div className="rounded-full bg-secondary p-3 text-secondary-foreground">
-            <Phone className="h-6 w-6" aria-hidden="true" />
-          </div>
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-              Prefer to talk? Call me directly
-            </p>
-            <a
-              href="tel:+12133026505"
-              className="text-2xl font-bold text-primary transition-colors hover:text-secondary focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring sm:text-3xl"
-              aria-label="Call Dandy Reyes at 213-302-6505"
-            >
-              (213) 302-6505
-            </a>
-          </div>
-        </div>
-
         <div className="lg:col-span-4">
           <Card className="border-border/50">
             <CardHeader>
@@ -283,6 +265,27 @@ export function Contact() {
               </Button>
             </CardContent>
           </Card>
+        </div>
+      </div>
+
+      <div
+        style={{ paddingTop: "4rem" }}
+        className="flex flex-col items-center justify-center gap-4 bg-secondary/5 px-6 text-center sm:flex-row sm:gap-5"
+      >
+        <div className="p-2 rounded-sm bg-secondary text-secondary-foreground">
+          <Phone className="h-8 w-8" aria-hidden="true" />
+        </div>
+        <div>
+          <p className="text-md font-semibold uppercase tracking-wide text-muted-foreground">
+            Prefer to talk? Call or Text me directly
+          </p>
+          <a
+            href="tel:+12133026505"
+            className="text-2xl font-bold text-primary transition-colors hover:text-secondary focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring sm:text-3xl"
+            aria-label="Call Dandy Reyes at 213-302-6505"
+          >
+            (213) 302-6505
+          </a>
         </div>
       </div>
     </section>

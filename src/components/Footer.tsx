@@ -1,6 +1,7 @@
 import { Separator } from "./ui/separator";
 import { LuLinkedin } from "react-icons/lu";
 import { FiMail } from "react-icons/fi";
+import { Phone } from "lucide-react";
 
 export function Footer() {
   return (
@@ -28,6 +29,13 @@ export function Footer() {
                 className="p-2 bg-primary-foreground/10 rounded-lg hover:bg-primary-foreground/20 transition-colors"
               >
                 <FiMail className="h-5 w-5" />
+              </a>
+              <a
+                href="tel:+12133026505"
+                className="p-2 bg-primary-foreground/10 rounded-lg hover:bg-primary-foreground/20 transition-colors"
+                aria-label="Call Dandy Reyes at 213-302-6505"
+              >
+                <Phone className="h-5 w-5" aria-hidden="true" />
               </a>
             </div>
           </div>
