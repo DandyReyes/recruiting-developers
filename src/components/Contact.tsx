@@ -10,7 +10,7 @@ import {
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { Label } from "./ui/label";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Phone } from "lucide-react";
 import ReCAPTCHA from "react-google-recaptcha";
 import emailjs from "@emailjs/browser";
 
@@ -44,7 +44,7 @@ export function Contact() {
   const recaptchaRef = useRef<ReCAPTCHA>(null);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { id, value } = e.target;
     setFormData((prev) => ({ ...prev, [id]: value }));
@@ -109,7 +109,7 @@ export function Contact() {
           ...formData,
           "g-recaptcha-response": token,
         },
-        (import.meta as any).env.VITE_PUBLIC_KEY
+        (import.meta as any).env.VITE_PUBLIC_KEY,
       );
       setToast({ type: "success", message: "Message sent successfully!" });
 
@@ -139,6 +139,24 @@ export function Contact() {
             exceptional team your organization deserves. Get in touch today for
             a confidential consultation.
           </p>
+        </div>
+
+        <div className="mb-10 flex flex-col items-center justify-center gap-4 rounded-xl border border-secondary/30 bg-secondary/5 px-6 py-6 text-center sm:flex-row sm:gap-5">
+          <div className="rounded-full bg-secondary p-3 text-secondary-foreground">
+            <Phone className="h-6 w-6" aria-hidden="true" />
+          </div>
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+              Prefer to talk? Call me directly
+            </p>
+            <a
+              href="tel:+12133026505"
+              className="text-2xl font-bold text-primary transition-colors hover:text-secondary focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring sm:text-3xl"
+              aria-label="Call Dandy Reyes at 213-302-6505"
+            >
+              (213) 302-6505
+            </a>
+          </div>
         </div>
 
         <div className="lg:col-span-4">
